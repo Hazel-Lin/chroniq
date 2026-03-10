@@ -20,7 +20,7 @@ program
   .description("新增一条记录")
   .argument("<content>", "记录内容")
   .option("-t, --tag <tag>", "附加标签（可多次指定，或用逗号分隔）", collectTag, [] as string[])
-  .addHelpText("after", "\n提示: 内容以 - 开头时，请用 -- 分隔，如: cq add -- \"-开头的内容\"")
+  .addHelpText("after", "\n提示: 内容里可用 #tag 自动标记，如: cq add \"想到一个方案 #idea\"")
   .action((content: string, options: { tag: string[] }) => {
     runAdd(content, options.tag);
   });
@@ -49,5 +49,16 @@ program
   .action((options: { format: string }) => {
     runExport(options.format);
   });
+
+// 默认命令：cq "内容" 等同于 cq add "内容"
+program.argument("[content]", "快速记录（等同于 cq add）");
+program.option("-t, --tag <tag>", "附加标签", collectTag, [] as string[]);
+program.action((content: string | undefined, options: { tag: string[] }) => {
+  if (content) {
+    runAdd(content, options.tag);
+  } else {
+    program.help();
+  }
+});
 
 program.parse();
