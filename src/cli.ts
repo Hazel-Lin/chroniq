@@ -11,13 +11,18 @@ program
   .description("Chroniq: local-first, CLI-first, agent-friendly personal logging")
   .version("0.1.0");
 
+function collectTag(val: string, prev: string[]) {
+  return prev.concat(val.split(",").map((t) => t.trim()).filter(Boolean));
+}
+
 program
   .command("add")
   .description("新增一条记录")
   .argument("<content>", "记录内容")
-  .option("-t, --tag <tag...>", "附加标签")
-  .action((content: string, options: { tag?: string[] }) => {
-    runAdd(content, options.tag ?? []);
+  .option("-t, --tag <tag>", "附加标签（可多次指定，或用逗号分隔）", collectTag, [] as string[])
+  .addHelpText("after", "\n提示: 内容以 - 开头时，请用 -- 分隔，如: cq add -- \"-开头的内容\"")
+  .action((content: string, options: { tag: string[] }) => {
+    runAdd(content, options.tag);
   });
 
 program
