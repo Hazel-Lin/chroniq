@@ -1,0 +1,34 @@
+{
+  "name": "chroniq",
+  "version": "0.1.0",
+  "description": "Local-first, CLI-first, agent-friendly personal logging",
+  "packageManager": "pnpm@10.14.0",
+  "type": "module",
+  "bin": {
+    "chroniq": "./bin/chroniq.js",
+    "pt": "./bin/chroniq.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/cli.ts",
+    "check": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "chroniq",
+    "cli",
+    "agent",
+    "jsonl",
+    "log",
+    "local-first",
+    "terminal"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^14.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.8.0"
+  }
+}
