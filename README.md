@@ -17,10 +17,10 @@ It intentionally does not try to become a full journaling app, knowledge base, o
 
 ## Features
 
-- Add notes from the terminal with `chroniq add` or `pt add`
-- Read today's notes with `chroniq today`
-- Browse stored dates with `chroniq list`
-- Export all entries as JSON with `chroniq export`
+- Add notes from the terminal with `chroniq add`, `cq add`, or `pt add`
+- Read today's notes with `cq today`
+- Browse stored dates with `cq list`
+- Export all entries as JSON with `cq export`
 - Store data in append-only `jsonl` files
 - Keep output readable for humans and stable for scripts
 
@@ -34,7 +34,7 @@ pnpm build
 pnpm link --global
 ```
 
-After installation, both `chroniq` and `pt` are available in your shell.
+After installation, `chroniq`, `cq`, and `pt` are available in your shell.
 
 ### Local development
 
@@ -50,9 +50,9 @@ node ./dist/cli.js --help
 ### Add an entry
 
 ```bash
-chroniq add "I want my logging flow to stay CLI-first"
-chroniq add "Build for agents should be the default" --tag thought
-chroniq add "Discussed personal logging schema" --tag idea work
+cq add "I want my logging flow to stay CLI-first"
+cq add "Build for agents should be the default" --tag thought
+cq add "Discussed personal logging schema" --tag idea work
 ```
 
 Example output:
@@ -66,23 +66,23 @@ ID: 20260310121030-123
 ### Read today's entries
 
 ```bash
-chroniq today
-chroniq today --json
+cq today
+cq today --json
 ```
 
 ### List dates or inspect a specific date
 
 ```bash
-chroniq list
-chroniq list --date 2026-03-10
-chroniq list --date 2026-03-10 --json
+cq list
+cq list --date 2026-03-10
+cq list --date 2026-03-10 --json
 ```
 
 ### Export all entries
 
 ```bash
-chroniq export
-chroniq export --format json
+cq export
+cq export --format json
 ```
 
 ## Data Format
@@ -117,9 +117,9 @@ This format is intended to be:
 Typical agent-friendly flow:
 
 ```bash
-chroniq add "Discussed CLI input design for personal logging" --tag idea
-chroniq today --json
-chroniq export --format json
+cq add "Discussed CLI input design for personal logging" --tag idea
+cq today --json
+cq export --format json
 ```
 
 That makes downstream classification, summarization, or indexing straightforward.
