@@ -12,7 +12,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/cli.ts",
-    "check": "tsc -p tsconfig.json --noEmit"
+    "check": "tsc -p tsconfig.json --noEmit",
+    "iter:doc": "node ./scripts/generate-iteration-doc.mjs",
+    "iter:hook": "git config core.hooksPath .githooks"
   },
   "keywords": [
     "chroniq",

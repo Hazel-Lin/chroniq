@@ -1,0 +1,3 @@
+#!/bin/sh
+
+node ./scripts/generate-iteration-doc.mjs --mode post-commit >/dev/null 2>&1 || true
