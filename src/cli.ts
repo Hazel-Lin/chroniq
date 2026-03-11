@@ -11,18 +11,21 @@ program
   .description("Chroniq: local-first, CLI-first, agent-friendly personal logging")
   .version("0.1.0");
 
-function collectTag(val: string, prev: string[]) {
+function collectTag(val: string, prev: string[] = []) {
   return prev.concat(val.split(",").map((t) => t.trim()).filter(Boolean));
 }
 
 program
   .command("add")
-  .description("新增一条记录")
-  .argument("<content...>", "记录内容（多个词会自动拼接）")
-  .option("-t, --tag <tag>", "附加标签（可多次指定，或用逗号分隔）", collectTag, [] as string[])
-  .addHelpText("after", "\n提示: 内容里可用 #tag 自动标记，如: cq add 想到一个方案 #idea")
-  .action((parts: string[], options: { tag: string[] }) => {
-    runAdd(parts.join(" "), options.tag);
+  .description("新增一条或多条记录")
+  .argument("[content...]", "记录内容（多个词会自动拼接）；不提供内容则进入多行模式")
+  .addHelpText("after", "\n示例:\n  cq add 想到一个方案 #idea           # 单条记录\n  cq add 完成任务A 完成任务B #work    # 行内标签\n  cq add                              # 多行模式（Ctrl+D 结束）\n  cq --tag work add                   # 多行模式 + 全局标签\n  cq --tag work,idea add              # 多个全局标签")
+  .action(async (parts: string[], options, command) => {
+    // 从父级 program 获取 --tag 选项
+    const parentOpts = command.parent?.opts();
+    const tags = parentOpts?.tag || [];
+    const content = parts.length > 0 ? parts.join(" ") : undefined;
+    await runAdd(content, tags);
   });
 
 program
@@ -53,11 +56,14 @@ program
 // 默认命令：cq 内容 等同于 cq add 内容
 program.argument("[content...]", "快速记录（等同于 cq add）");
 program.option("-t, --tag <tag>", "附加标签", collectTag, [] as string[]);
-program.action((parts: string[], options: { tag: string[] }) => {
-  if (parts.length > 0) {
-    runAdd(parts.join(" "), options.tag);
-  } else {
+program.action(async (parts: string[], options: { tag: string[] }) => {
+  // 如果没有任何参数且在终端环境，显示帮助
+  // 如果有 --tag 参数但没有内容，进入多行模式
+  if (parts.length === 0 && options.tag.length === 0 && process.stdin.isTTY) {
     program.help();
+  } else {
+    const content = parts.length > 0 ? parts.join(" ") : undefined;
+    await runAdd(content, options.tag);
   }
 });
 
