@@ -2,3 +2,8 @@ node_modules
 dist
 data/logs/*.jsonl
 docs/
+# Local verification scripts kept out of version control
+quick-test.sh
+test-*.sh
+verify-all.sh
+demo-*.sh
