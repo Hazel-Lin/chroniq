@@ -18,6 +18,8 @@ It intentionally does not try to become a full journaling app, knowledge base, o
 ## Features
 
 - Add notes from the terminal with `chroniq add` or `cq add`
+- Save one multi-line note with `chroniq add --multiline` or `cat note.md | chroniq add --stdin`
+- Split one input block into multiple notes with `chroniq add --split`
 - Read today's notes with `cq today`
 - Browse stored dates with `cq list`
 - Export all entries as JSON with `cq export`
@@ -53,6 +55,9 @@ node ./dist/cli.js --help
 cq add "I want my logging flow to stay CLI-first"
 cq add "Build for agents should be the default" --tag thought
 cq add "Discussed personal logging schema" --tag idea work
+cq add --multiline
+cat note.md | cq add --stdin
+cat tasks.txt | cq add --stdin --split auto
 ```
 
 Example output:
@@ -68,6 +73,7 @@ ID: 20260310121030-123
 ```bash
 cq today
 cq today --json
+cq today --full
 ```
 
 ### List dates or inspect a specific date
@@ -76,6 +82,7 @@ cq today --json
 cq list
 cq list --date 2026-03-10
 cq list --date 2026-03-10 --json
+cq list --date 2026-03-10 --full
 ```
 
 ### Export all entries

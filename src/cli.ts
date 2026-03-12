@@ -28,7 +28,7 @@ addInputOptions(program
   .command("add")
   .description("新增一条或多条记录")
   .argument("[content...]", "记录内容（多个词会自动拼接）；不提供内容则进入多行模式")
-  .addHelpText("after", "\n示例:\n  cq add 想到一个方案 #idea           # 单条记录\n  cq add 完成任务A 完成任务B #work    # 行内标签\n  cq add                              # 多行模式（Ctrl+D 结束）\n  cq --tag work add                   # 多行模式 + 全局标签\n  cq --tag work,idea add              # 多个全局标签")
+  .addHelpText("after", "\n示例:\n  cq add 想到一个方案 #idea                      # 单条记录\n  cq add 完成任务A 完成任务B #work               # 行内标签\n  cq add                                         # 多行模式（Ctrl+D 结束）\n  cq add --multiline                             # 编辑器录入单条多行\n  cat note.md | cq add --stdin                   # 标准输入保存为单条记录\n  cat bullets.txt | cq add --stdin --split auto  # 自动拆分多条\n  cq today --full                                # 按原换行查看正文\n  cq list --date 2026-03-12 --full               # 查看某天全文")
   .action(async (...args: unknown[]) => {
     const parts = (args[0] as string[]) || [];
     const command = args.at(-1) as Command;
