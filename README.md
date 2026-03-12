@@ -56,11 +56,14 @@ node ./dist/cli.js --help
 cq add "I want my logging flow to stay CLI-first"
 cq add "Build for agents should be the default" --tag thought
 cq add "Discussed personal logging schema" --tag idea work
+cq add "One line with inline tag #idea"
 cq add --multiline
 chroniq add --stdin
 cat note.md | cq add --stdin
 cat tasks.txt | cq add --stdin --split auto
 ```
+
+If you use inline `#tags` in your shell command, keep the whole content in quotes. Otherwise your shell treats `#...` as a comment before Chroniq sees it.
 
 Example output:
 

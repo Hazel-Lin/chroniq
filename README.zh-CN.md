@@ -56,11 +56,14 @@ node ./dist/cli.js --help
 chroniq add "I want my logging flow to stay CLI-first"
 chroniq add "Build for agents should be the default" --tag thought
 chroniq add "Discussed personal logging schema" --tag idea work
+chroniq add "带内联标签的一条记录 #idea"
 chroniq add --multiline
 chroniq add --stdin
 cat note.md | chroniq add --stdin
 cat tasks.txt | chroniq add --stdin --split auto
 ```
+
+如果你想在命令里直接写 `#标签`，请把整条内容放进引号里；否则 shell 会在进入 Chroniq 之前把 `#` 后面的内容当成注释。
 
 示例输出：
 
