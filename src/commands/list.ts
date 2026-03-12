@@ -1,7 +1,7 @@
 import { formatDateSummary } from "../lib/format.js";
 import { isValidDateKey, listAvailableDates, readEntriesForDateKey } from "../lib/store.js";
 
-export function runList(date?: string, asJson = false) {
+export function runList(date?: string, asJson = false, full = false) {
   if (date) {
     if (!isValidDateKey(date)) {
       console.error(`日期格式无效: ${date}（应为 YYYY-MM-DD）`);
@@ -12,7 +12,7 @@ export function runList(date?: string, asJson = false) {
       console.log(JSON.stringify(entries, null, 2));
       return;
     }
-    console.log(formatDateSummary(date, entries));
+    console.log(formatDateSummary(date, entries, full));
     return;
   }
 
@@ -30,6 +30,6 @@ export function runList(date?: string, asJson = false) {
   for (let i = 0; i < dates.length; i++) {
     if (i > 0) console.log();
     const entries = readEntriesForDateKey(dates[i]);
-    console.log(formatDateSummary(dates[i], entries));
+    console.log(formatDateSummary(dates[i], entries, full));
   }
 }

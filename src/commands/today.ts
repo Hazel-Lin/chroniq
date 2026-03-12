@@ -1,7 +1,7 @@
 import { formatEntries } from "../lib/format.js";
 import { readEntriesForDate } from "../lib/store.js";
 
-export function runToday(asJson: boolean) {
+export function runToday(asJson: boolean, full = false) {
   const entries = readEntriesForDate(new Date());
   if (asJson) {
     console.log(JSON.stringify(entries, null, 2));
@@ -12,5 +12,5 @@ export function runToday(asJson: boolean) {
     return;
   }
   console.log(`今天 (${entries.length} 条)`);
-  console.log(formatEntries(entries));
+  console.log(formatEntries(entries, full));
 }

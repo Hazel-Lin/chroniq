@@ -48,8 +48,9 @@ program
   .command("today")
   .description("查看今天的记录")
   .option("--json", "以 JSON 输出")
-  .action((options: { json?: boolean }) => {
-    runToday(Boolean(options.json));
+  .option("--full", "按原换行展示正文")
+  .action((options: { json?: boolean; full?: boolean }) => {
+    runToday(Boolean(options.json), Boolean(options.full));
   });
 
 program
@@ -57,8 +58,9 @@ program
   .description("列出可用日期或查看指定日期的记录")
   .option("-d, --date <date>", "指定日期，格式 YYYY-MM-DD")
   .option("--json", "以 JSON 输出")
-  .action((options: { date?: string; json?: boolean }) => {
-    runList(options.date, Boolean(options.json));
+  .option("--full", "按原换行展示正文")
+  .action((options: { date?: string; json?: boolean; full?: boolean }) => {
+    runList(options.date, Boolean(options.json), Boolean(options.full));
   });
 
 program

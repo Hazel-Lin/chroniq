@@ -24,15 +24,36 @@ export function formatEntry(entry: LogEntry) {
   return `  ${time}  ${content}${tags}`;
 }
 
-export function formatEntries(entries: LogEntry[]) {
+export function formatEntryFull(entry: LogEntry) {
+  const time = formatTime(entry.created_at);
+  const tags = entry.tags.length ? ` [${entry.tags.join(", ")}]` : "";
+  const body = (entry.content || "(空)")
+    .split("\n")
+    .map((line) => `        ${line}`)
+    .join("\n");
+  return `  ${time}${tags}\n${body}`;
+}
+
+export function formatEntries(entries: LogEntry[], full = false) {
   if (entries.length === 0) {
     return "暂无记录";
   }
-  return entries.map(formatEntry).join("\n");
+  return full
+    ? entries.map(formatEntryFull).join("\n\n")
+    : entries.map(formatEntry).join("\n");
 }
 
-export function formatDateSummary(dateKey: string, entries: LogEntry[]) {
+export function formatDateSummary(dateKey: string, entries: LogEntry[], full = false) {
   const lines: string[] = [`${dateKey} (${entries.length} 条)`];
+  if (full) {
+    if (entries.length === 0) {
+      return lines.join("\n");
+    }
+    lines.push("");
+    lines.push(entries.map(formatEntryFull).join("\n\n"));
+    return lines.join("\n");
+  }
+
   for (const entry of entries) {
     const time = formatTime(entry.created_at);
     const content = entry.content ? truncate(entry.content, 50) : "(空)";
