@@ -4,6 +4,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { AddCommandOptions, AddContractError, resolveAddContract } from "../lib/add-contract.js";
+import { splitInputBlock } from "../lib/splitter.js";
 import { appendEntry, createEntry } from "../lib/store.js";
 
 const HASHTAG_RE = /#([\w\u4e00-\u9fff]+)/g;
@@ -27,6 +28,43 @@ function addSingleEntry(content: string, tags: string[]) {
   const preview = single.length > 60 ? single.slice(0, 59) + "…" : single;
   console.log(`✓ 已记录: ${preview}  (ID: ${entry.id})`);
   return entry;
+}
+
+function addMultipleEntries(contents: string[], tags: string[]) {
+  console.log(`\n开始记录 ${contents.length} 条...\n`);
+  let successCount = 0;
+
+  for (const line of contents) {
+    try {
+      addSingleEntry(line, tags);
+      successCount++;
+    } catch {
+      console.error(`❌ 记录失败: ${line}`);
+    }
+  }
+
+  console.log(`\n🎉 成功记录 ${successCount}/${contents.length} 条`);
+}
+
+function finalizeBatchLines(lines: string[]) {
+  return lines
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+function persistBlock(block: string, tags: string[], splitMode?: AddCommandOptions["split"]) {
+  if (!splitMode) {
+    addSingleEntry(block, tags);
+    return;
+  }
+
+  const entries = splitInputBlock(block, splitMode);
+  if (entries.length === 0) {
+    console.error("❌ 拆分后没有可记录的内容");
+    process.exit(1);
+  }
+
+  addMultipleEntries(entries, tags);
 }
 
 function readFromEditor(): string[] | null {
@@ -238,7 +276,7 @@ export async function runAdd(content: string | undefined, options: AddCommandOpt
       process.exit(1);
     }
 
-    addSingleEntry(block, tags);
+    persistBlock(block, tags, contract.split);
     return;
   }
 
@@ -256,7 +294,7 @@ export async function runAdd(content: string | undefined, options: AddCommandOpt
       process.exit(1);
     }
 
-    addSingleEntry(block, tags);
+    persistBlock(block, tags, contract.split);
     return;
   }
 
@@ -291,28 +329,13 @@ export async function runAdd(content: string | undefined, options: AddCommandOpt
       process.exit(0);
     }
 
-    const validLines = lines
-      .map((line) => line.trim())
-      .filter(Boolean); // 过滤空行
+    const validLines = finalizeBatchLines(lines);
 
     if (validLines.length === 0) {
       console.error("❌ 没有输入任何内容");
       process.exit(1);
     }
-
-    console.log(`\n开始记录 ${validLines.length} 条...\n`);
-    let successCount = 0;
-
-    for (const line of validLines) {
-      try {
-        addSingleEntry(line, tags);
-        successCount++;
-      } catch (error) {
-        console.error(`❌ 记录失败: ${line}`);
-      }
-    }
-
-    console.log(`\n🎉 成功记录 ${successCount}/${validLines.length} 条`);
+    addMultipleEntries(validLines, tags);
     return;
   }
 
@@ -322,5 +345,5 @@ export async function runAdd(content: string | undefined, options: AddCommandOpt
     process.exit(1);
   }
 
-  addSingleEntry(contract.content, tags);
+  persistBlock(contract.content, tags, contract.split);
 }

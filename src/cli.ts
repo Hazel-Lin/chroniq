@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import { Command, Option } from "commander";
 import { runAdd } from "./commands/add.js";
 import { runExport } from "./commands/export.js";
 import { runList } from "./commands/list.js";
@@ -20,7 +20,8 @@ function collectTag(val: string, prev: string[] = []) {
 function addInputOptions<T extends Command>(command: T) {
   return command
     .option("-m, --multiline", "用编辑器录入单条多行内容")
-    .option("--stdin", "将整个标准输入作为单条记录写入");
+    .option("--stdin", "将整个标准输入作为单条记录写入")
+    .addOption(new Option("--split <mode>", "按规则拆成多条记录").choices(["auto", "bullets", "paragraphs"]));
 }
 
 addInputOptions(program
@@ -34,11 +35,12 @@ addInputOptions(program
 
     // 从父级 program 获取 --tag 选项
     const parentOpts = command.parent?.opts<{ tag?: string[] }>();
-    const commandOpts = command.opts<{ multiline?: boolean; stdin?: boolean }>();
+    const commandOpts = command.opts<{ multiline?: boolean; stdin?: boolean; split?: AddCommandOptions["split"] }>();
     const addOptions: AddCommandOptions = {
       tags: parentOpts?.tag || [],
       multiline: Boolean(commandOpts.multiline),
       stdin: Boolean(commandOpts.stdin),
+      split: commandOpts.split,
     };
     const content = parts.length > 0 ? parts.join(" ") : undefined;
     await runAdd(content, addOptions);
