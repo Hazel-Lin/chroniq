@@ -183,6 +183,24 @@ async function readMultilineInput(): Promise<string[] | null> {
   });
 }
 
+async function readWholeStdin(): Promise<string> {
+  process.stdin.setEncoding("utf8");
+
+  return await new Promise((resolve, reject) => {
+    let buffer = "";
+
+    process.stdin.on("data", (chunk: string) => {
+      buffer += chunk;
+    });
+
+    process.stdin.on("end", () => {
+      resolve(buffer);
+    });
+
+    process.stdin.on("error", reject);
+  });
+}
+
 export async function runAdd(content: string | undefined, options: AddCommandOptions) {
   let contract;
   try {
@@ -215,6 +233,24 @@ export async function runAdd(content: string | undefined, options: AddCommandOpt
       process.exit(0);
     }
 
+    if (!block.trim()) {
+      console.error("❌ 没有输入任何内容");
+      process.exit(1);
+    }
+
+    addSingleEntry(block, tags);
+    return;
+  }
+
+  if (contract.sourceMode === "stdin") {
+    if (process.stdin.isTTY) {
+      console.log("📝 单条 stdin 模式：输入内容后按 Ctrl+D 结束");
+      if (tags.length > 0) {
+        console.log(`🏷️  全局标签: ${tags.join(", ")}`);
+      }
+    }
+
+    const block = await readWholeStdin();
     if (!block.trim()) {
       console.error("❌ 没有输入任何内容");
       process.exit(1);

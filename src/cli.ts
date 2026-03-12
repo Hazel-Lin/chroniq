@@ -18,7 +18,9 @@ function collectTag(val: string, prev: string[] = []) {
 }
 
 function addInputOptions<T extends Command>(command: T) {
-  return command.option("-m, --multiline", "用编辑器录入单条多行内容");
+  return command
+    .option("-m, --multiline", "用编辑器录入单条多行内容")
+    .option("--stdin", "将整个标准输入作为单条记录写入");
 }
 
 addInputOptions(program
@@ -32,10 +34,11 @@ addInputOptions(program
 
     // 从父级 program 获取 --tag 选项
     const parentOpts = command.parent?.opts<{ tag?: string[] }>();
-    const commandOpts = command.opts<{ multiline?: boolean }>();
+    const commandOpts = command.opts<{ multiline?: boolean; stdin?: boolean }>();
     const addOptions: AddCommandOptions = {
       tags: parentOpts?.tag || [],
       multiline: Boolean(commandOpts.multiline),
+      stdin: Boolean(commandOpts.stdin),
     };
     const content = parts.length > 0 ? parts.join(" ") : undefined;
     await runAdd(content, addOptions);
