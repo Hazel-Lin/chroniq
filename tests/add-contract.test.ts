@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { AddContractError, resolveAddContract } from "../src/lib/add-contract.js";
+import { AddContractError, resolveAddContract, resolveBlockReadMode } from "../src/lib/add-contract.js";
 
 test("resolveAddContract keeps direct content as argv mode", () => {
   const contract = resolveAddContract("hello", { tags: ["idea"] });
@@ -19,4 +19,12 @@ test("resolveAddContract rejects conflicting sources", () => {
     () => resolveAddContract("hello", { tags: [], multiline: true }),
     AddContractError,
   );
+});
+
+test("resolveBlockReadMode uses editor for interactive stdin block input", () => {
+  assert.equal(resolveBlockReadMode("stdin", true), "editor");
+});
+
+test("resolveBlockReadMode keeps piped stdin as stream input", () => {
+  assert.equal(resolveBlockReadMode("stdin", false), "stdin");
 });

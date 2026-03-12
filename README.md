@@ -19,6 +19,7 @@ It intentionally does not try to become a full journaling app, knowledge base, o
 
 - Add notes from the terminal with `chroniq add` or `cq add`
 - Save one multi-line note with `chroniq add --multiline` or `cat note.md | chroniq add --stdin`
+- Interactive `chroniq add --stdin` automatically opens your editor, so multi-line content stays editable before save
 - Split one input block into multiple notes with `chroniq add --split`
 - Read today's notes with `cq today`
 - Browse stored dates with `cq list`
@@ -56,6 +57,7 @@ cq add "I want my logging flow to stay CLI-first"
 cq add "Build for agents should be the default" --tag thought
 cq add "Discussed personal logging schema" --tag idea work
 cq add --multiline
+chroniq add --stdin
 cat note.md | cq add --stdin
 cat tasks.txt | cq add --stdin --split auto
 ```

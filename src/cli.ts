@@ -20,7 +20,7 @@ function collectTag(val: string, prev: string[] = []) {
 function addInputOptions<T extends Command>(command: T) {
   return command
     .option("-m, --multiline", "用编辑器录入单条多行内容")
-    .option("--stdin", "将整个标准输入作为单条记录写入")
+    .option("--stdin", "将整个标准输入作为单条记录写入；TTY 下自动打开编辑器")
     .addOption(new Option("--split <mode>", "按规则拆成多条记录").choices(["auto", "bullets", "paragraphs"]));
 }
 

@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { AddCommandOptions, AddContractError, resolveAddContract } from "../lib/add-contract.js";
+import { AddCommandOptions, AddContractError, resolveAddContract, resolveBlockReadMode } from "../lib/add-contract.js";
 import { splitInputBlock } from "../lib/splitter.js";
 import { appendEntry, createEntry } from "../lib/store.js";
 
@@ -294,7 +294,8 @@ export async function runAdd(content: string | undefined, options: AddCommandOpt
   const { tags } = contract;
 
   if (contract.sourceMode === "multiline") {
-    if (!process.stdin.isTTY) {
+    const blockReadMode = resolveBlockReadMode(contract.sourceMode, process.stdin.isTTY);
+    if (blockReadMode !== "editor") {
       console.error("❌ --multiline 需要在终端环境中使用");
       process.exit(1);
     }
@@ -321,11 +322,27 @@ export async function runAdd(content: string | undefined, options: AddCommandOpt
   }
 
   if (contract.sourceMode === "stdin") {
-    if (process.stdin.isTTY) {
-      console.log("📝 单条 stdin 模式：输入内容后按 Ctrl+D 结束");
+    const blockReadMode = resolveBlockReadMode(contract.sourceMode, process.stdin.isTTY);
+    if (blockReadMode === "editor") {
+      console.log("📝 检测到交互式终端，已切换为编辑器块输入");
+      console.log("💡 这样可以自由删除、修改多行内容；保存退出后仍按单条记录写入");
       if (tags.length > 0) {
         console.log(`🏷️  全局标签: ${tags.join(", ")}`);
       }
+
+      const block = readSingleBlockFromEditor();
+      if (block === null) {
+        console.log("\n❌ 已取消，未保存任何内容");
+        process.exit(0);
+      }
+
+      if (!block.trim()) {
+        console.error("❌ 没有输入任何内容");
+        process.exit(1);
+      }
+
+      await persistBlock(block, tags, contract.split);
+      return;
     }
 
     const block = await readWholeStdin();

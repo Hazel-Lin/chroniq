@@ -1,6 +1,7 @@
 export type AddSourceMode = "argv" | "batch" | "multiline" | "stdin" | "file";
 
 export type SplitMode = "auto" | "bullets" | "paragraphs";
+export type BlockReadMode = "editor" | "stdin";
 
 export interface AddCommandOptions {
   tags: string[];
@@ -19,6 +20,18 @@ export interface ResolvedAddContract {
 }
 
 export class AddContractError extends Error {}
+
+export function resolveBlockReadMode(sourceMode: AddSourceMode, stdinIsTTY: boolean): BlockReadMode {
+  if (sourceMode === "multiline") {
+    return "editor";
+  }
+
+  if (sourceMode === "stdin") {
+    return stdinIsTTY ? "editor" : "stdin";
+  }
+
+  throw new AddContractError(`source mode ${sourceMode} does not support block input`);
+}
 
 export function resolveAddContract(
   content: string | undefined,
