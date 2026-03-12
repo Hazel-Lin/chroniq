@@ -3,6 +3,7 @@ import { runAdd } from "./commands/add.js";
 import { runExport } from "./commands/export.js";
 import { runList } from "./commands/list.js";
 import { runToday } from "./commands/today.js";
+import { renderWelcomeScreen } from "./lib/welcome.js";
 
 const program = new Command();
 
@@ -57,10 +58,10 @@ program
 program.argument("[content...]", "快速记录（等同于 cq add）");
 program.option("-t, --tag <tag>", "附加标签", collectTag, [] as string[]);
 program.action(async (parts: string[], options: { tag: string[] }) => {
-  // 如果没有任何参数且在终端环境，显示帮助
+  // 如果没有任何参数且在终端环境，显示欢迎卡片
   // 如果有 --tag 参数但没有内容，进入多行模式
   if (parts.length === 0 && options.tag.length === 0 && process.stdin.isTTY) {
-    program.help();
+    console.log(renderWelcomeScreen());
   } else {
     const content = parts.length > 0 ? parts.join(" ") : undefined;
     await runAdd(content, options.tag);
