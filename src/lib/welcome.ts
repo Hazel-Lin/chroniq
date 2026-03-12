@@ -86,14 +86,23 @@ function renderPlainRow(text: string, innerWidth: number) {
   return `│ ${padRight(text, innerWidth)} │`;
 }
 
+function renderBox(rows: string[], innerWidth: number) {
+  const border = "─".repeat(innerWidth + 2);
+  return [
+    applyStyles(`╭${border}╮`, ["dim"]),
+    ...rows,
+    applyStyles(`╰${border}╯`, ["dim"]),
+  ].join("\n");
+}
+
 export function renderWelcomeScreen() {
   const termWidth = process.stdout.columns ?? 80;
-  const maxInnerWidth = Math.max(36, Math.min(72, termWidth - 4));
+  const cardInnerWidth = Math.max(36, Math.min(72, termWidth - 4));
 
   const directoryLabel = "directory: ";
   const directoryValue = centerTruncate(
     relativizeHome(process.cwd()),
-    maxInnerWidth - textWidth(directoryLabel),
+    cardInnerWidth - textWidth(directoryLabel),
   );
 
   const rows = [
@@ -101,36 +110,26 @@ export function renderWelcomeScreen() {
       { text: ">_ ", styles: ["dim"] },
       { text: "Chroniq", styles: ["cyan", "bold"] },
       { text: ` (v${packageJson.version})`, styles: ["gray"] },
-    ], maxInnerWidth),
-    renderPlainRow("", maxInnerWidth),
+    ], cardInnerWidth),
+    renderPlainRow("", cardInnerWidth),
     renderSegmentRow([
       { text: "mode:      ", styles: ["dim"] },
-      { text: "local-first personal logging", styles: ["bold"] },
-    ], maxInnerWidth),
+      { text: "local-first logging", styles: ["bold"] },
+    ], cardInnerWidth),
     renderSegmentRow([
       { text: "storage:   ", styles: ["dim"] },
       { text: "data/logs/YYYY-MM-DD.jsonl" },
-    ], maxInnerWidth),
+    ], cardInnerWidth),
     renderSegmentRow([
       { text: directoryLabel, styles: ["dim"] },
       { text: directoryValue },
-    ], maxInnerWidth),
-    renderSegmentRow([
-      { text: "aliases:   ", styles: ["dim"] },
-      { text: "chroniq / cq" },
-    ], maxInnerWidth),
+    ], cardInnerWidth),
   ];
 
-  const border = "─".repeat(maxInnerWidth + 2);
-  const card = [
-    applyStyles(`╭${border}╮`, ["dim"]),
-    ...rows,
-    applyStyles(`╰${border}╯`, ["dim"]),
-  ].join("\n");
-
+  const card = renderBox(rows, cardInnerWidth);
   const tips = [
     `${applyStyles("Tip:", ["green", "bold"])} 运行 ${applyStyles("chroniq add \"今天的想法 #idea\"", ["cyan"])} 快速记录`,
-    `${applyStyles("›", ["cyan", "bold"])} chroniq add        # 多行多条`,
+    `${applyStyles("›", ["cyan", "bold"])} chroniq add         # 多行多条`,
     `${applyStyles("›", ["cyan", "bold"])} chroniq add --stdin # 多行单条`,
     `${applyStyles("›", ["cyan", "bold"])} chroniq today`,
     `${applyStyles("›", ["cyan", "bold"])} chroniq list`,
