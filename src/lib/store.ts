@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { randomBytes } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { LogEntry, isLogEntry } from "./schema.js";
@@ -34,13 +35,25 @@ export function getLogFilePath(date: Date) {
 
 let lastId = "";
 let idSeq = 0;
+const PROCESS_ID_SALT = randomBytes(2).toString("hex");
+
+function buildIdBase(date: Date) {
+  const millis = String(date.getMilliseconds()).padStart(3, "0");
+  return `${getDateKey(date).replace(/-/g, "")}${String(date.getHours()).padStart(2, "0")}${String(date.getMinutes()).padStart(2, "0")}${String(date.getSeconds()).padStart(2, "0")}-${millis}`;
+}
+
+export function buildEntryId(date: Date, seq: number, processSalt = PROCESS_ID_SALT) {
+  const baseId = buildIdBase(date);
+  return seq === 0
+    ? `${baseId}-${processSalt}`
+    : `${baseId}-${processSalt}-${seq}`;
+}
 
 export function createEntry(content: string, tags: string[] = [], source = "cli"): LogEntry {
   const now = new Date();
   const cleanTags = [...new Set(tags.map((tag) => tag.trim()).filter(Boolean))];
   const localISO = toLocalISO(now);
-  const millis = String(now.getMilliseconds()).padStart(3, "0");
-  const baseId = `${getDateKey(now).replace(/-/g, "")}${String(now.getHours()).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}${String(now.getSeconds()).padStart(2, "0")}-${millis}`;
+  const baseId = buildIdBase(now);
 
   if (baseId === lastId) {
     idSeq++;
@@ -48,7 +61,7 @@ export function createEntry(content: string, tags: string[] = [], source = "cli"
     lastId = baseId;
     idSeq = 0;
   }
-  const id = idSeq === 0 ? baseId : `${baseId}-${idSeq}`;
+  const id = buildEntryId(now, idSeq);
 
   return {
     id,
