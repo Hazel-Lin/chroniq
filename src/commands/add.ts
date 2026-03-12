@@ -30,6 +30,11 @@ function addSingleEntry(content: string, tags: string[]) {
   return entry;
 }
 
+function previewContent(content: string) {
+  const single = content.replace(/\n/g, " ↵ ").trim();
+  return single.length > 60 ? single.slice(0, 59) + "…" : single;
+}
+
 function addMultipleEntries(contents: string[], tags: string[]) {
   console.log(`\n开始记录 ${contents.length} 条...\n`);
   let successCount = 0;
@@ -52,7 +57,36 @@ function finalizeBatchLines(lines: string[]) {
     .filter(Boolean);
 }
 
-function persistBlock(block: string, tags: string[], splitMode?: AddCommandOptions["split"]) {
+async function confirmSplitEntries(entries: string[]) {
+  if (!process.stdin.isTTY || !process.stdout.isTTY) {
+    return true;
+  }
+
+  console.log(`\n拆分预览（共 ${entries.length} 条）:`);
+  entries.forEach((entry, index) => {
+    console.log(`  ${index + 1}. ${previewContent(entry)}`);
+  });
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  const answer = await new Promise<string>((resolve) => {
+    rl.question("\n确认写入？[y/N] ", (value) => {
+      rl.close();
+      resolve(value);
+    });
+  });
+
+  return /^(y|yes)$/i.test(answer.trim());
+}
+
+async function persistBlock(
+  block: string,
+  tags: string[],
+  splitMode?: AddCommandOptions["split"],
+) {
   if (!splitMode) {
     addSingleEntry(block, tags);
     return;
@@ -62,6 +96,12 @@ function persistBlock(block: string, tags: string[], splitMode?: AddCommandOptio
   if (entries.length === 0) {
     console.error("❌ 拆分后没有可记录的内容");
     process.exit(1);
+  }
+
+  const confirmed = await confirmSplitEntries(entries);
+  if (!confirmed) {
+    console.log("❌ 已取消，未保存任何内容");
+    process.exit(0);
   }
 
   addMultipleEntries(entries, tags);
@@ -276,7 +316,7 @@ export async function runAdd(content: string | undefined, options: AddCommandOpt
       process.exit(1);
     }
 
-    persistBlock(block, tags, contract.split);
+    await persistBlock(block, tags, contract.split);
     return;
   }
 
@@ -294,7 +334,7 @@ export async function runAdd(content: string | undefined, options: AddCommandOpt
       process.exit(1);
     }
 
-    persistBlock(block, tags, contract.split);
+    await persistBlock(block, tags, contract.split);
     return;
   }
 
@@ -345,5 +385,5 @@ export async function runAdd(content: string | undefined, options: AddCommandOpt
     process.exit(1);
   }
 
-  persistBlock(contract.content, tags, contract.split);
+  await persistBlock(contract.content, tags, contract.split);
 }
