@@ -3,6 +3,7 @@ import { runAdd } from "./commands/add.js";
 import { runExport } from "./commands/export.js";
 import { runList } from "./commands/list.js";
 import { runToday } from "./commands/today.js";
+import { AddCommandOptions } from "./lib/add-contract.js";
 import { renderWelcomeScreen } from "./lib/welcome.js";
 
 const program = new Command();
@@ -24,9 +25,11 @@ program
   .action(async (parts: string[], options, command) => {
     // 从父级 program 获取 --tag 选项
     const parentOpts = command.parent?.opts();
-    const tags = parentOpts?.tag || [];
+    const addOptions: AddCommandOptions = {
+      tags: parentOpts?.tag || [],
+    };
     const content = parts.length > 0 ? parts.join(" ") : undefined;
-    await runAdd(content, tags);
+    await runAdd(content, addOptions);
   });
 
 program
@@ -64,7 +67,7 @@ program.action(async (parts: string[], options: { tag: string[] }) => {
     console.log(renderWelcomeScreen());
   } else {
     const content = parts.length > 0 ? parts.join(" ") : undefined;
-    await runAdd(content, options.tag);
+    await runAdd(content, { tags: options.tag });
   }
 });
 

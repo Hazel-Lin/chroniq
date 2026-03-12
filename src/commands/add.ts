@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { AddCommandOptions, AddContractError, resolveAddContract } from "../lib/add-contract.js";
 import { appendEntry, createEntry } from "../lib/store.js";
 
 const HASHTAG_RE = /#([\w\u4e00-\u9fff]+)/g;
@@ -155,9 +156,22 @@ async function readMultilineInput(): Promise<string[] | null> {
   });
 }
 
-export async function runAdd(content: string | undefined, tags: string[]) {
+export async function runAdd(content: string | undefined, options: AddCommandOptions) {
+  let contract;
+  try {
+    contract = resolveAddContract(content, options);
+  } catch (error) {
+    if (error instanceof AddContractError) {
+      console.error(`❌ ${error.message}`);
+      process.exit(1);
+    }
+    throw error;
+  }
+
+  const { tags } = contract;
+
   // 如果没有提供 content，进入交互式多行模式
-  if (!content) {
+  if (contract.sourceMode === "batch") {
     let lines: string[] | null;
 
     // 如果是终端交互，使用编辑器模式
@@ -213,10 +227,10 @@ export async function runAdd(content: string | undefined, tags: string[]) {
   }
 
   // 单条记录模式
-  if (!content.trim()) {
+  if (!contract.content?.trim()) {
     console.error("❌ 内容不能为空");
     process.exit(1);
   }
 
-  addSingleEntry(content, tags);
+  addSingleEntry(contract.content, tags);
 }
