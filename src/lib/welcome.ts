@@ -130,6 +130,8 @@ export function renderWelcomeScreen() {
 
   const tips = [
     `${applyStyles("Tip:", ["green", "bold"])} 运行 ${applyStyles("chroniq add \"今天的想法 #idea\"", ["cyan"])} 快速记录`,
+    `${applyStyles("›", ["cyan", "bold"])} chroniq add        # 多行多条`,
+    `${applyStyles("›", ["cyan", "bold"])} chroniq add --stdin # 多行单条`,
     `${applyStyles("›", ["cyan", "bold"])} chroniq today`,
     `${applyStyles("›", ["cyan", "bold"])} chroniq list`,
     `${applyStyles("›", ["cyan", "bold"])} chroniq export`,

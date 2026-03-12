@@ -50,10 +50,17 @@ node ./dist/cli.js --help
 
 ## 用法
 
+### 输入模式
+
+- `chroniq add`：按行输入，一行落一条记录。
+- `chroniq add --stdin`：按块输入，整段内容默认落成一条记录；如果再加 `--split`，才会拆成多条。
+
 ### 新增记录
 
 ```bash
 chroniq add "I want my logging flow to stay CLI-first"
+chroniq add                  # 多行输入 -> 多条记录
+chroniq add --stdin          # 多行输入 -> 单条记录
 chroniq add "Build for agents should be the default" --tag thought
 chroniq add "Discussed personal logging schema" --tag idea work
 chroniq add "带内联标签的一条记录 #idea"

@@ -50,10 +50,17 @@ node ./dist/cli.js --help
 
 ## Usage
 
+### Input modes
+
+- `chroniq add`: line-oriented input. One line becomes one record.
+- `chroniq add --stdin`: block-oriented input. The whole input block becomes one record unless you also pass `--split`.
+
 ### Add an entry
 
 ```bash
 cq add "I want my logging flow to stay CLI-first"
+cq add                       # multi-line input -> multiple records
+cq add --stdin               # multi-line input -> one record
 cq add "Build for agents should be the default" --tag thought
 cq add "Discussed personal logging schema" --tag idea work
 cq add "One line with inline tag #idea"
