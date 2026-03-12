@@ -17,7 +17,7 @@ It intentionally does not try to become a full journaling app, knowledge base, o
 
 ## Features
 
-- Add notes from the terminal with `chroniq add`, `cq add`, or `pt add`
+- Add notes from the terminal with `chroniq add` or `cq add`
 - Read today's notes with `cq today`
 - Browse stored dates with `cq list`
 - Export all entries as JSON with `cq export`
@@ -34,7 +34,7 @@ pnpm build
 pnpm link --global
 ```
 
-After installation, `chroniq`, `cq`, and `pt` are available in your shell.
+After installation, `chroniq` and `cq` are available in your shell.
 
 ### Local development
 

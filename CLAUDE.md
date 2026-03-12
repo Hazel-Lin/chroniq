@@ -33,7 +33,7 @@ cq export
 cq export --format json
 ```
 
-别名: `chroniq` / `cq` / `pt`
+别名: `chroniq` / `cq`
 
 ## 数据格式
 每条记录为一行 JSON:

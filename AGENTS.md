@@ -33,7 +33,7 @@ src/
     store.ts           ← createEntry(), appendEntry(), read helpers
     format.ts          ← Output formatting utilities
 data/logs/             ← Runtime data: YYYY-MM-DD.jsonl files
-bin/chroniq.js         ← Bin entry (aliases: chroniq, pt, cq)
+bin/chroniq.js         ← Bin entry (aliases: chroniq, cq)
 docs/                  ← Knowledge base (see below)
 ```
 

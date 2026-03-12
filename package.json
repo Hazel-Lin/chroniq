@@ -6,7 +6,6 @@
   "type": "module",
   "bin": {
     "chroniq": "./bin/chroniq.js",
-    "pt": "./bin/chroniq.js",
     "cq": "./bin/chroniq.js"
   },
   "scripts": {
