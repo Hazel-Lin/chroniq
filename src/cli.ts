@@ -17,20 +17,29 @@ function collectTag(val: string, prev: string[] = []) {
   return prev.concat(val.split(",").map((t) => t.trim()).filter(Boolean));
 }
 
-program
+function addInputOptions<T extends Command>(command: T) {
+  return command.option("-m, --multiline", "用编辑器录入单条多行内容");
+}
+
+addInputOptions(program
   .command("add")
   .description("新增一条或多条记录")
   .argument("[content...]", "记录内容（多个词会自动拼接）；不提供内容则进入多行模式")
   .addHelpText("after", "\n示例:\n  cq add 想到一个方案 #idea           # 单条记录\n  cq add 完成任务A 完成任务B #work    # 行内标签\n  cq add                              # 多行模式（Ctrl+D 结束）\n  cq --tag work add                   # 多行模式 + 全局标签\n  cq --tag work,idea add              # 多个全局标签")
-  .action(async (parts: string[], options, command) => {
+  .action(async (...args: unknown[]) => {
+    const parts = (args[0] as string[]) || [];
+    const command = args.at(-1) as Command;
+
     // 从父级 program 获取 --tag 选项
-    const parentOpts = command.parent?.opts();
+    const parentOpts = command.parent?.opts<{ tag?: string[] }>();
+    const commandOpts = command.opts<{ multiline?: boolean }>();
     const addOptions: AddCommandOptions = {
       tags: parentOpts?.tag || [],
+      multiline: Boolean(commandOpts.multiline),
     };
     const content = parts.length > 0 ? parts.join(" ") : undefined;
     await runAdd(content, addOptions);
-  });
+  }));
 
 program
   .command("today")
@@ -60,14 +69,20 @@ program
 // 默认命令：cq 内容 等同于 cq add 内容
 program.argument("[content...]", "快速记录（等同于 cq add）");
 program.option("-t, --tag <tag>", "附加标签", collectTag, [] as string[]);
-program.action(async (parts: string[], options: { tag: string[] }) => {
+program.action(async (...args: unknown[]) => {
+  const parts = (args[0] as string[]) || [];
+  const command = args.at(-1) as Command;
+  const options = command.opts<{ tag: string[] }>();
+
   // 如果没有任何参数且在终端环境，显示欢迎卡片
   // 如果有 --tag 参数但没有内容，进入多行模式
   if (parts.length === 0 && options.tag.length === 0 && process.stdin.isTTY) {
     console.log(renderWelcomeScreen());
   } else {
     const content = parts.length > 0 ? parts.join(" ") : undefined;
-    await runAdd(content, { tags: options.tag });
+    await runAdd(content, {
+      tags: options.tag,
+    });
   }
 });
 

@@ -13,7 +13,7 @@ export function extractInlineTags(content: string): { clean: string; tags: strin
   const clean = content.replace(HASHTAG_RE, (_, tag) => {
     tags.push(tag);
     return "";
-  }).replace(/\s{2,}/g, " ").trim();
+  }).replace(/[^\S\n]{2,}/g, " ").trim();
   return { clean, tags };
 }
 
@@ -76,6 +76,33 @@ function readFromEditor(): string[] | null {
     return lines;
   } finally {
     // 清理临时文件
+    try {
+      rmSync(tmpDir, { recursive: true, force: true });
+    } catch {
+      // 忽略清理错误
+    }
+  }
+}
+
+function readSingleBlockFromEditor(): string | null {
+  const editor = process.env.EDITOR || process.env.VISUAL || "vim";
+  const tmpDir = mkdtempSync(join(tmpdir(), "chroniq-"));
+  const tmpFile = join(tmpDir, "entry.txt");
+
+  writeFileSync(tmpFile, "", "utf8");
+
+  try {
+    const result = spawnSync(editor, [tmpFile], {
+      stdio: "inherit",
+      shell: true,
+    });
+
+    if (result.status !== 0) {
+      return null;
+    }
+
+    return readFileSync(tmpFile, "utf8");
+  } finally {
     try {
       rmSync(tmpDir, { recursive: true, force: true });
     } catch {
@@ -169,6 +196,33 @@ export async function runAdd(content: string | undefined, options: AddCommandOpt
   }
 
   const { tags } = contract;
+
+  if (contract.sourceMode === "multiline") {
+    if (!process.stdin.isTTY) {
+      console.error("❌ --multiline 需要在终端环境中使用");
+      process.exit(1);
+    }
+
+    console.log("📝 正在打开编辑器（单条多行模式）...");
+    console.log("💡 保存并退出后，将整段内容作为一条记录写入");
+    if (tags.length > 0) {
+      console.log(`🏷️  全局标签: ${tags.join(", ")}`);
+    }
+
+    const block = readSingleBlockFromEditor();
+    if (block === null) {
+      console.log("\n❌ 已取消，未保存任何内容");
+      process.exit(0);
+    }
+
+    if (!block.trim()) {
+      console.error("❌ 没有输入任何内容");
+      process.exit(1);
+    }
+
+    addSingleEntry(block, tags);
+    return;
+  }
 
   // 如果没有提供 content，进入交互式多行模式
   if (contract.sourceMode === "batch") {
