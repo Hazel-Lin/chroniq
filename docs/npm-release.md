@@ -14,6 +14,25 @@ Expected:
 - npm account is `hazellin`
 - Git remote points to `Hazel-Lin/chroniq`
 
+Choose one CI publishing method before relying on GitHub Actions:
+
+### Option A: npm trusted publishing (recommended)
+
+On npm package settings for `@hazellin/chroniq`, add a trusted publisher with:
+
+- GitHub user/org: `Hazel-Lin`
+- Repository: `chroniq`
+- Workflow filename: `release.yml`
+
+Notes:
+
+- Trusted publishing for GitHub Actions requires GitHub-hosted runners.
+- npm CLI must be `11.5.1+`, so the workflow upgrades npm before publish.
+
+### Option B: `NPM_TOKEN` fallback
+
+Add repository secret `NPM_TOKEN` with npm publish access. This is only needed if trusted publishing is not configured.
+
 ## Release steps
 
 1. Update `package.json` version.
@@ -48,3 +67,4 @@ chroniq --help
 
 - The unscoped package name `chroniq` is already taken on npm, so publishing uses the scoped package name.
 - `prepack` rebuilds `dist/` before packaging to avoid shipping stale compiled files.
+- GitHub Actions release publishing now supports either npm trusted publishing or a fallback `NPM_TOKEN`.
