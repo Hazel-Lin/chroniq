@@ -228,7 +228,7 @@ pnpm release:check
 npm publish --access public
 ```
 
-See the [npm release checklist](https://github.com/Hazel-Lin/chroniq/blob/main/docs/npm-release.md) and the [launch kit](https://github.com/Hazel-Lin/chroniq/blob/main/docs/go-to-market/launch-kit.md).
+See the [npm release checklist](https://github.com/Hazel-Lin/chroniq/blob/main/docs/npm-release.md).
 
 ## License
 

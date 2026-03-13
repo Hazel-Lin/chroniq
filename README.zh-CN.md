@@ -228,7 +228,7 @@ pnpm release:check
 npm publish --access public
 ```
 
-完整清单见 [npm 发布清单](https://github.com/Hazel-Lin/chroniq/blob/main/docs/npm-release.md)，推广文案见 [launch kit](https://github.com/Hazel-Lin/chroniq/blob/main/docs/go-to-market/launch-kit.md)。
+完整清单见 [npm 发布清单](https://github.com/Hazel-Lin/chroniq/blob/main/docs/npm-release.md)。
 
 ## 许可
 

@@ -71,7 +71,6 @@ For deeper context, consult these docs:
 | `docs/product-specs/product-roadmap.md` | Product direction & phases |
 | `docs/product-specs/positioning-icp-competitors.md` | Positioning, ICP, competitors |
 | `docs/v0.2-dev-checklist.md`            | v0.2 development checklist |
-| `docs/iteration-docs.md`               | Iteration documentation workflow |
 | `docs/exec-plans/`                      | Execution plans (active/completed) |
 | `docs/design-docs/`                     | Design documents           |
 | `ARCHITECTURE.md`                       | System architecture & data flow |
