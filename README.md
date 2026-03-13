@@ -12,6 +12,8 @@ Published package: `@hazellin/chroniq`
 
 Installed binaries: `chroniq`, `cq`
 
+![Chroniq terminal demo](./assets/chroniq-demo.gif)
+
 ## Why
 
 - Fast input over heavy structure
