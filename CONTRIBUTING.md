@@ -13,15 +13,15 @@ Thanks for contributing to `Chroniq`.
 ## Development Setup
 
 ```bash
-npm install
-npm run check
-npm run build
+pnpm install
+pnpm check
+pnpm build
 ```
 
 Run the CLI locally:
 
 ```bash
-npm run dev -- --help
+pnpm dev -- --help
 node ./dist/cli.js --help
 ```
 
@@ -32,7 +32,7 @@ Please:
 1. Open an issue first for significant changes.
 2. Keep each pull request focused on one concern.
 3. Add or update docs when behavior changes.
-4. Run `npm run check` and `npm run build` before submitting.
+4. Run `pnpm check` and `pnpm build` before submitting.
 5. Include clear reproduction steps for bug fixes.
 
 ## Design Boundaries
