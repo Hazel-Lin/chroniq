@@ -25,6 +25,12 @@
     "local-first",
     "terminal"
   ],
+  "files": [
+    "dist/",
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ],
   "license": "MIT",
   "dependencies": {
     "commander": "^14.0.0"
