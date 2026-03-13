@@ -1,18 +1,23 @@
 {
-  "name": "chroniq",
+  "name": "@hazellin/chroniq",
   "version": "0.1.0",
-  "description": "Local-first, CLI-first, agent-friendly personal logging",
+  "description": "Local-first, CLI-first note capture for humans and agents",
   "packageManager": "pnpm@10.14.0",
   "type": "module",
   "bin": {
-    "chroniq": "./bin/chroniq.js",
-    "cq": "./bin/chroniq.js"
+    "chroniq": "bin/chroniq.js",
+    "cq": "bin/chroniq.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "clean": "node --input-type=module -e \"import { rmSync } from 'node:fs'; rmSync('dist', { recursive: true, force: true });\"",
+    "build": "pnpm clean && tsc -p tsconfig.json",
     "dev": "tsx src/cli.ts",
     "check": "tsc -p tsconfig.json --noEmit",
     "test": "tsx --test tests/**/*.test.ts",
+    "prepack": "pnpm build",
+    "release:check": "pnpm check && pnpm test && npm pack --dry-run",
+    "publish:dry-run": "npm publish --access public --dry-run",
+    "publish:npm": "npm publish --access public",
     "iter:doc": "node ./scripts/generate-iteration-doc.mjs",
     "iter:hook": "git config core.hooksPath .githooks"
   },
@@ -32,6 +37,18 @@
     "LICENSE"
   ],
   "license": "MIT",
+  "author": "Hazel Lin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hazel-Lin/chroniq.git"
+  },
+  "homepage": "https://github.com/Hazel-Lin/chroniq#readme",
+  "bugs": {
+    "url": "https://github.com/Hazel-Lin/chroniq/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "commander": "^14.0.0"
   },

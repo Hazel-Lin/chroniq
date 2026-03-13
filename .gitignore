@@ -1,7 +1,11 @@
 node_modules
 dist
 data/logs/*.jsonl
-docs/
+docs/*
+!docs/go-to-market/
+docs/go-to-market/*
+!docs/go-to-market/launch-kit.md
+!docs/npm-release.md
 # Local verification scripts kept out of version control
 quick-test.sh
 test-*.sh

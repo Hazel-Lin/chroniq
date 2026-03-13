@@ -8,6 +8,10 @@ It is built for one narrow job: capture lightweight notes quickly, keep them app
 
 It intentionally does not try to become a full journaling app, knowledge base, or review system.
 
+Published package: `@hazellin/chroniq`
+
+Installed binaries: `chroniq`, `cq`
+
 ## Why
 
 - Fast input over heavy structure
@@ -28,6 +32,20 @@ It intentionally does not try to become a full journaling app, knowledge base, o
 - Keep output readable for humans and stable for scripts
 
 ## Installation
+
+### From npm
+
+```bash
+npm install -g @hazellin/chroniq
+chroniq --help
+```
+
+Or with pnpm:
+
+```bash
+pnpm add -g @hazellin/chroniq
+cq today
+```
 
 ### From source
 
@@ -190,13 +208,25 @@ Before opening a PR:
 - preserve stable JSON output for agent use
 - run `pnpm check` and `pnpm build`
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
+See [CONTRIBUTING.md](https://github.com/Hazel-Lin/chroniq/blob/main/CONTRIBUTING.md) for details.
 
 ## Security and Privacy
 
 Chroniq stores entries as local plain-text JSONL files. Do not use it for secrets unless your local machine and repository workflow are already set up for that risk.
 
-See [SECURITY.md](./SECURITY.md).
+See [SECURITY.md](https://github.com/Hazel-Lin/chroniq/blob/main/SECURITY.md).
+
+## Release
+
+Maintainer release flow:
+
+```bash
+pnpm install
+pnpm release:check
+npm publish --access public
+```
+
+See the [npm release checklist](https://github.com/Hazel-Lin/chroniq/blob/main/docs/npm-release.md) and the [launch kit](https://github.com/Hazel-Lin/chroniq/blob/main/docs/go-to-market/launch-kit.md).
 
 ## License
 

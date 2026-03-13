@@ -64,4 +64,4 @@ When reporting a bug, include:
 
 ## Community
 
-By participating in this project, you agree to follow the [Code of Conduct](/Users/linhuizi/Desktop/personal-log/CODE_OF_CONDUCT.md).
+By participating in this project, you agree to follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
